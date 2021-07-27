@@ -5,7 +5,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
+        os: [ubuntu-latest]
     env:
       OS: ${{ matrix.os }}
       PYTHON: '3.9'
@@ -17,6 +17,7 @@ jobs:
         python-version: 3.9
     - name: Generate coverage report
       run: |
+        sudo apt-get install autoconf automake libtool python3.7-dev python3-tk jq awscli
         pip install pytest
         pip install pytest-cov
         pip install -r ./requirements.txt
