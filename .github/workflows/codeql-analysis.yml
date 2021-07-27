@@ -71,5 +71,5 @@ jobs:
       uses: github/codeql-action/analyze@v1
       
     # Added automatic linting check after to verify formatting
-    - name: Super-Linter
-      uses: github/super-linter@v4.5.1
+    # - name: Super-Linter
+    #   uses: github/super-linter@v4.5.1
