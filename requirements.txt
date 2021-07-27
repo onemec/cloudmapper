@@ -7,7 +7,7 @@ certifi==2021.5.30
 chardet==4.0.0
 coverage==5.5
 docutils==0.17.1
-idna==2.8
+idna==3.2
 isort==4.3.21
 Jinja2==2.11.3
 jmespath==0.9.5
