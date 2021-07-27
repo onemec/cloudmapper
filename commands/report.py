@@ -1,10 +1,13 @@
 from __future__ import print_function
+
 import argparse
 import json
-import yaml
 import os.path
+
 from jinja2 import Template
 
+from cloudmapper import __version__
+from shared.audit import audit, load_audit_config, finding_is_filtered
 from shared.common import (
     parse_arguments,
     get_regions,
@@ -14,9 +17,6 @@ from shared.common import (
 )
 from shared.nodes import Account, Region
 from shared.public import get_public_nodes
-from shared.audit import audit, load_audit_config, finding_is_filtered
-
-from cloudmapper import __version__
 
 __description__ = "Create report"
 
@@ -55,7 +55,7 @@ SEVERITIES = [
     {"name": "Low", "color": "rgba(255, 255, 102, 1)"},  # Yellow
     {"name": "Info", "color": "rgba(154, 214, 156, 1)"},  # Green
     {"name": "Verbose", "color": "rgba(133, 163, 198, 1)"},  # Blue
-] 
+]
 
 ACTIVE_COLOR = "rgb(139, 214, 140)"
 BAD_COLOR = "rgb(204, 120, 120)"
@@ -276,8 +276,8 @@ def report(accounts, config, args):
                 t["public_ports"].append(public_node["ports"])
 
             t["account_public_ports"][account["name"]][public_node["ports"]] = (
-                t["account_public_ports"][account["name"]].get(public_node["ports"], 0)
-                + 1
+                    t["account_public_ports"][account["name"]].get(public_node["ports"], 0)
+                    + 1
             )
 
     # Pass data for the public port chart

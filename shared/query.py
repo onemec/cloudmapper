@@ -1,6 +1,6 @@
-import urllib
-import os
 import json
+import os
+import urllib
 
 
 def query_aws(account, query, region=None):

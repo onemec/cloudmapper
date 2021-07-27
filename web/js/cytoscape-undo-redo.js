@@ -43,10 +43,9 @@
             cy = this;
 
 
-
             function getScratch() {
                 if (!cy.scratch("_undoRedo")) {
-                    cy.scratch("_undoRedo", { });
+                    cy.scratch("_undoRedo", {});
 
                 }
                 return cy.scratch("_undoRedo");
@@ -81,8 +80,7 @@
         });
 
         //resets undo and redo stacks
-        _instance.reset = function()
-        {
+        _instance.reset = function () {
             undoStack = [];
             redoStack = [];
         }
@@ -117,7 +115,7 @@
                 cy.trigger(action.firstTime ? "beforeDo" : "beforeRedo", [action.name, action.args]);
 
                 if (!action.args)
-                  action.args = {};
+                    action.args = {};
                 action.args.firstTime = action.firstTime ? true : false;
 
                 var res = actions[action.name]._do(action.args);
@@ -126,9 +124,9 @@
                     name: action.name,
                     args: res
                 });
-                
-                if (_instance.options.stackSizeLimit != undefined && undoStack.length > _instance.options.stackSizeLimit ) {
-                  undoStack.shift();
+
+                if (_instance.options.stackSizeLimit != undefined && undoStack.length > _instance.options.stackSizeLimit) {
+                    undoStack.shift();
                 }
 
                 cy.trigger(action.firstTime ? "afterDo" : "afterRedo", [action.name, action.args, res]);
@@ -153,17 +151,17 @@
         };
 
         // Undo all actions in undo stack
-        _instance.undoAll = function() {
-            
-            while( !this.isUndoStackEmpty() ) {
+        _instance.undoAll = function () {
+
+            while (!this.isUndoStackEmpty()) {
                 this.undo();
             }
         };
-        
+
         // Redo all actions in redo stack
-        _instance.redoAll = function() {
-            
-            while( !this.isRedoStackEmpty() ) {
+        _instance.redoAll = function () {
+
+            while (!this.isRedoStackEmpty()) {
                 this.redo();
             }
         };
@@ -242,8 +240,7 @@
                         var nodes;
                         if (node.selected()) {
                             nodes = cy.nodes(":visible").filter(":selected");
-                        }
-                        else {
+                        } else {
                             nodes = cy.collection([node]);
                         }
 
@@ -265,12 +262,12 @@
                 nodesMap[nodes[i].id()] = true;
             }
             var roots = nodes.filter(function (ele, i) {
-                if(typeof ele === "number") {
-                  ele = i;
+                if (typeof ele === "number") {
+                    ele = i;
                 }
                 var parent = ele.parent()[0];
-                while(parent != null){
-                    if(nodesMap[parent.id()]){
+                while (parent != null) {
+                    if (nodesMap[parent.id()]) {
                         return false;
                     }
                     parent = parent.parent()[0];
@@ -282,7 +279,7 @@
         }
 
         function moveNodes(positionDiff, nodes, notCalcTopMostNodes) {
-            var topMostNodes = notCalcTopMostNodes?nodes:getTopMostNodes(nodes);
+            var topMostNodes = notCalcTopMostNodes ? nodes : getTopMostNodes(nodes);
             for (var i = 0; i < topMostNodes.length; i++) {
                 var node = topMostNodes[i];
                 var oldX = node.position("x");
@@ -308,10 +305,10 @@
         function returnToPositions(positions) {
             var currentPositions = {};
             cy.nodes().positions(function (ele, i) {
-                if(typeof ele === "number") {
-                  ele = i;
+                if (typeof ele === "number") {
+                    ele = i;
                 }
-                
+
                 currentPositions[ele.id()] = {
                     x: ele.position("x"),
                     y: ele.position("y")
@@ -340,44 +337,42 @@
         }
 
         function changeParent(param) {
-          var result = {
-          };
-          // If this is first time we should move the node to its new parent and relocate it by given posDiff params
-          // else we should remove the moved eles and restore the eles to restore 
-          if (param.firstTime) {
-            var newParentId = param.parentData == undefined ? null : param.parentData;
-            // These eles includes the nodes and their connected edges and will be removed in nodes.move().
-            // They should be restored in undo
-            var withDescendant = param.nodes.union(param.nodes.descendants());
-            result.elesToRestore = withDescendant.union(withDescendant.connectedEdges());
-            // These are the eles created by nodes.move(), they should be removed in undo.
-            result.movedEles = param.nodes.move({"parent": newParentId});
-            
-            var posDiff = {
-              x: param.posDiffX,
-              y: param.posDiffY
-            };
+            var result = {};
+            // If this is first time we should move the node to its new parent and relocate it by given posDiff params
+            // else we should remove the moved eles and restore the eles to restore
+            if (param.firstTime) {
+                var newParentId = param.parentData == undefined ? null : param.parentData;
+                // These eles includes the nodes and their connected edges and will be removed in nodes.move().
+                // They should be restored in undo
+                var withDescendant = param.nodes.union(param.nodes.descendants());
+                result.elesToRestore = withDescendant.union(withDescendant.connectedEdges());
+                // These are the eles created by nodes.move(), they should be removed in undo.
+                result.movedEles = param.nodes.move({"parent": newParentId});
 
-            moveNodes(posDiff, result.movedEles);
-          }
-          else {
-            result.elesToRestore = param.movedEles.remove();
-            result.movedEles = param.elesToRestore.restore();
-          }
+                var posDiff = {
+                    x: param.posDiffX,
+                    y: param.posDiffY
+                };
 
-          if (param.callback) {
-            result.callback = param.callback; // keep the provided callback so it can be reused after undo/redo
-            param.callback(result.movedEles); // apply the callback on newly created elements
-          }
+                moveNodes(posDiff, result.movedEles);
+            } else {
+                result.elesToRestore = param.movedEles.remove();
+                result.movedEles = param.elesToRestore.restore();
+            }
 
-          return result;
+            if (param.callback) {
+                result.callback = param.callback; // keep the provided callback so it can be reused after undo/redo
+                param.callback(result.movedEles); // apply the callback on newly created elements
+            }
+
+            return result;
         }
 
         // function registered in the defaultActions below
         // to be used like .do('batch', actionList)
         // allows to apply any quantity of registered action in one go
         // the whole batch can be undone/redone with one key press
-        function batch (actionList, doOrUndo) {
+        function batch(actionList, doOrUndo) {
             var tempStack = []; // corresponds to the results of every action queued in actionList
 
             // here we need to check in advance if all the actions provided really correspond to available functions
@@ -397,8 +392,7 @@
                 var actionResult;
                 if (doOrUndo == "undo") {
                     actionResult = actions[action.name]._undo(action.param);
-                }
-                else {
+                } else {
                     actionResult = actions[action.name]._do(action.param);
                 }
 
@@ -409,7 +403,7 @@
             }
 
             return tempStack;
-        };
+        }
 
         // Default actions
         function defaultActions() {
@@ -509,21 +503,20 @@
                 },
                 "layout": {
                     _do: function (args) {
-                        if (args.firstTime){
+                        if (args.firstTime) {
                             var positions = getNodePositions();
                             var layout;
-                            if(args.eles) {
-                              layout = getEles(args.eles).layout(args.options);
+                            if (args.eles) {
+                                layout = getEles(args.eles).layout(args.options);
+                            } else {
+                                layout = cy.layout(args.options);
                             }
-                            else {
-                              layout = cy.layout(args.options);
-                            }
-                            
+
                             // Do this check for cytoscape.js backward compatibility
                             if (layout && layout.run) {
-                              layout.run();
+                                layout.run();
                             }
-                            
+
                             return positions;
                         } else
                             return returnToPositions(args);

@@ -1,8 +1,8 @@
 import pyjq
 
+from commands.prepare import get_resource_nodes
 from shared.common import query_aws, get_regions
 from shared.nodes import Account, Region
-from commands.prepare import get_resource_nodes
 
 
 def find_unused_security_groups(region):
@@ -22,7 +22,7 @@ def find_unused_security_groups(region):
         defined_sg_set[sg["GroupId"]] = sg
 
     for used_sg in pyjq.all(
-        ".NetworkInterfaces[].Groups[].GroupId", network_interfaces
+            ".NetworkInterfaces[].Groups[].GroupId", network_interfaces
     ):
         used_sgs.add(used_sg)
 
@@ -78,7 +78,7 @@ def find_unused_network_interfaces(region):
         region.account, "ec2-describe-network-interfaces", region
     )
     for network_interface in pyjq.all(
-        '.NetworkInterfaces[]|select(.Status=="available")', network_interfaces
+            '.NetworkInterfaces[]|select(.Status=="available")', network_interfaces
     ):
         unused_network_interfaces.append(
             {"id": network_interface["NetworkInterfaceId"]}
@@ -86,12 +86,14 @@ def find_unused_network_interfaces(region):
 
     return unused_network_interfaces
 
+
 def find_unused_elastic_load_balancers(region):
     unused_elastic_load_balancers = []
     elastic_load_balancers = query_aws(region.account, "elb-describe-load-balancers", region)
-    for elastic_load_balancer in pyjq.all(".LoadBalancerDescriptions[] | select(.Instances == [])", elastic_load_balancers):
+    for elastic_load_balancer in pyjq.all(".LoadBalancerDescriptions[] | select(.Instances == [])",
+                                          elastic_load_balancers):
         unused_elastic_load_balancers.append({"LoadBalancerName": elastic_load_balancer["LoadBalancerName"]})
-        
+
     return unused_elastic_load_balancers
 
 

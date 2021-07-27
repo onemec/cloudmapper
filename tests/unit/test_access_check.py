@@ -1,9 +1,9 @@
 import argparse
-import unittest
 import json
-from nose.tools import assert_equal, assert_true, assert_false
+import unittest
 
-from shared.common import parse_arguments
+from nose.tools import assert_equal, assert_true
+
 from commands.access_check import (
     replace_principal_variables,
     Principal,
@@ -11,6 +11,7 @@ from commands.access_check import (
     get_allowed_privileges,
     access_check_command,
 )
+from shared.common import parse_arguments
 
 
 class TestAccessCheck(unittest.TestCase):

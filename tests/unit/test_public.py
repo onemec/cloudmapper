@@ -1,9 +1,9 @@
 import unittest
-import json
-from nose.tools import assert_equal, assert_true, assert_false
 
-from shared.public import regroup_ranges, port_ranges_string, get_public_nodes
+from nose.tools import assert_equal
+
 from shared.common import parse_arguments
+from shared.public import regroup_ranges, port_ranges_string, get_public_nodes
 
 
 class TestPublic(unittest.TestCase):

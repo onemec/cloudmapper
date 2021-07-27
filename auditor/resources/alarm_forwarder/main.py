@@ -1,5 +1,7 @@
-import boto3
 import os
+
+import boto3
+
 
 def handler(event, context):
     sns = boto3.client('sns')

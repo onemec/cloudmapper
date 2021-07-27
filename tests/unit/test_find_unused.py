@@ -1,15 +1,12 @@
 import sys
-import json
-from importlib import reload
-
 from unittest import TestCase, mock
-from unittest.mock import MagicMock
-from nose.tools import assert_equal, assert_true, assert_false
+
+from nose.tools import assert_equal
 
 
 class TestFindUnused(TestCase):
     mock_account = type("account", (object,), {"name": "a"})
-    mock_region = type("region", (object,), {"account": mock_account, "name": "a", "region": mock_account })
+    mock_region = type("region", (object,), {"account": mock_account, "name": "a", "region": mock_account})
 
     def test_find_unused_elastic_ips_empty(self):
         def mocked_query_side_effect(account, query, region):

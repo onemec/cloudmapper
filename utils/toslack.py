@@ -1,8 +1,9 @@
 import json
-import requests
-import sys
 import os
+import sys
 import time
+
+import requests
 
 # Usage: Set the environment variable SLACK_WEBHOOK to https://hooks.slack.com/services/XXXX/YYYYY
 
@@ -11,7 +12,7 @@ webhook_url = os.environ['SLACK_WEBHOOK']
 for line in sys.stdin:
     line.rstrip()
     line = line.replace('\\n', '\n')
-    #print(line)
+    # print(line)
 
     slack_data = {'text': line}
 

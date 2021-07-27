@@ -1,6 +1,8 @@
 from __future__ import print_function
-import sys
+
 import argparse
+import sys
+
 from shared.common import parse_arguments, get_account_stats
 
 __description__ = "Print counts of resources for accounts"
@@ -14,7 +16,6 @@ def output_image(accounts, account_stats, resource_names, output_image_file):
     import pandas as pd
     import seaborn as sns
     import matplotlib.pyplot as plt
-    from pandas.plotting import table
 
     # Reverse order of accounts so they appear in the graph correctly
     accounts = list(reversed(accounts))

@@ -1,22 +1,25 @@
-import os.path
-import os
-import glob
 import argparse
-from shutil import rmtree
-import logging
+import glob
 import json
+import logging
+import os
+import os.path
 import time
-import boto3
-import yaml
-import pyjq
 import urllib.parse
-from botocore.exceptions import ClientError, EndpointConnectionError, NoCredentialsError
-from shared.common import get_account, custom_serializer
+from shutil import rmtree
+
+import boto3
+import pyjq
+import yaml
 from botocore.config import Config
+from botocore.exceptions import ClientError, EndpointConnectionError, NoCredentialsError
+
+from shared.common import get_account, custom_serializer
 
 __description__ = "Run AWS API calls to collect data from the account"
 
 MAX_RETRIES = 3
+
 
 def snakecase(s):
     return s.replace("-", "_")
@@ -118,56 +121,56 @@ def call_function(outputfile, handler, method_to_call, parameters, check, summar
             # This error occurs when you try to get the account Public Access Block policy for an account that has none, so this can be ignored.
             print("  - No public access block set")
         elif (
-            "ServerSideEncryptionConfigurationNotFoundError" in str(e)
-            and call_summary["service"] == "s3"
-            and call_summary["action"] == "get_bucket_encryption"
+                "ServerSideEncryptionConfigurationNotFoundError" in str(e)
+                and call_summary["service"] == "s3"
+                and call_summary["action"] == "get_bucket_encryption"
         ):
             print("  - No encryption set")
         elif (
-            "NoSuchEntity" in str(e)
-            and call_summary["action"] == "get_account_password_policy"
+                "NoSuchEntity" in str(e)
+                and call_summary["action"] == "get_account_password_policy"
         ):
             print("  - No password policy set")
         elif (
-            "AccessDeniedException" in str(e)
-            and call_summary["service"] == "organizations"
-            and call_summary["action"] == "list_accounts"
+                "AccessDeniedException" in str(e)
+                and call_summary["service"] == "organizations"
+                and call_summary["action"] == "list_accounts"
         ):
             print("  - Denied, which likely means this is not the organization root")
         elif (
-            "RepositoryPolicyNotFoundException" in str(e)
-            and call_summary["service"] == "ecr"
-            and call_summary["action"] == "get_repository_policy"
+                "RepositoryPolicyNotFoundException" in str(e)
+                and call_summary["service"] == "ecr"
+                and call_summary["action"] == "get_repository_policy"
         ):
             print("  - No policy exists")
         elif (
-            "ResourceNotFoundException" in str(e)
-            and call_summary["service"] == "lambda"
-            and call_summary["action"] == "get_policy"
+                "ResourceNotFoundException" in str(e)
+                and call_summary["service"] == "lambda"
+                and call_summary["action"] == "get_policy"
         ):
             print("  - No policy exists")
         elif (
-            "AccessDeniedException" in str(e)
-            and call_summary["service"] == "kms"
-            and call_summary["action"] == "list_key_policies"
+                "AccessDeniedException" in str(e)
+                and call_summary["service"] == "kms"
+                and call_summary["action"] == "list_key_policies"
         ):
             print("  - Denied, which should mean this KMS has restricted access")
         elif (
-            "AccessDeniedException" in str(e)
-            and call_summary["service"] == "kms"
-            and call_summary["action"] == "list_grants"
+                "AccessDeniedException" in str(e)
+                and call_summary["service"] == "kms"
+                and call_summary["action"] == "list_grants"
         ):
             print("  - Denied, which should mean this KMS has restricted access")
         elif (
-            "AccessDeniedException" in str(e)
-            and call_summary["service"] == "kms"
-            and call_summary["action"] == "get_key_policy"
+                "AccessDeniedException" in str(e)
+                and call_summary["service"] == "kms"
+                and call_summary["action"] == "get_key_policy"
         ):
             print("  - Denied, which should mean this KMS has restricted access")
         elif (
-            "AccessDeniedException" in str(e)
-            and call_summary["service"] == "kms"
-            and call_summary["action"] == "get_key_rotation_status"
+                "AccessDeniedException" in str(e)
+                and call_summary["service"] == "kms"
+                and call_summary["action"] == "get_key_rotation_status"
         ):
             print("  - Denied, which should mean this KMS has restricted access")
         elif "AWSOrganizationsNotInUseException" in str(e):
@@ -322,7 +325,7 @@ def collect(arguments):
                 if region["RegionName"] != default_region:
                     continue
             elif region["RegionName"] not in session.get_available_regions(
-                runner["Service"]
+                    runner["Service"]
             ):
                 print(
                     "  Skipping region {}, as {} does not exist there".format(
@@ -369,7 +372,7 @@ def collect(arguments):
                             # For each cluster, read the `ecs list-tasks`
                             for clusterArn in list_clusters["clusterArns"]:
                                 cluster_path = (
-                                    action_path + "/" + urllib.parse.quote_plus(clusterArn)
+                                        action_path + "/" + urllib.parse.quote_plus(clusterArn)
                                 )
                                 make_directory(cluster_path)
 
@@ -386,11 +389,11 @@ def collect(arguments):
                                     # For each task, call `ecs describe-tasks` using the `cluster` and `task` as arguments
                                     for taskArn in list_tasks["taskArns"]:
                                         outputfile = (
-                                            action_path
-                                            + "/"
-                                            + urllib.parse.quote_plus(clusterArn)
-                                            + "/"
-                                            + urllib.parse.quote_plus(taskArn)
+                                                action_path
+                                                + "/"
+                                                + urllib.parse.quote_plus(clusterArn)
+                                                + "/"
+                                                + urllib.parse.quote_plus(taskArn)
                                         )
 
                                         call_parameters = {}
@@ -419,7 +422,7 @@ def collect(arguments):
                         # For each region
                         for collect_region in describe_regions["Regions"]:
                             cluster_path = (
-                                action_path + "/" + urllib.parse.quote_plus(collect_region["RegionName"])
+                                    action_path + "/" + urllib.parse.quote_plus(collect_region["RegionName"])
                             )
                             make_directory(cluster_path)
 
@@ -436,11 +439,11 @@ def collect(arguments):
 
                                     for vpc in describe_vpcs["Vpcs"]:
                                         outputfile = (
-                                            action_path
-                                            + "/"
-                                            + urllib.parse.quote_plus(collect_region["RegionName"])
-                                            + "/"
-                                            + urllib.parse.quote_plus(vpc["VpcId"])
+                                                action_path
+                                                + "/"
+                                                + urllib.parse.quote_plus(collect_region["RegionName"])
+                                                + "/"
+                                                + urllib.parse.quote_plus(vpc["VpcId"])
                                         )
 
                                         call_parameters = {}

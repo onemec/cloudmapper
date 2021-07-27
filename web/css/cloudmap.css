@@ -2,7 +2,11 @@ body {
     background-color: #f0f0f0;
 }
 
-html, body {margin: 0; height: 100%; overflow: hidden}
+html, body {
+    margin: 0;
+    height: 100%;
+    overflow: hidden
+}
 
 #menu {
     color: #666;
@@ -21,20 +25,20 @@ html, body {margin: 0; height: 100%; overflow: hidden}
 
 
 #nodeInfo {
-    position:absolute;
-	z-index: 9999;
+    position: absolute;
+    z-index: 9999;
     top: 0;
-    
+
     right: 0;
     left: 0;
     overflow: hidden;
-    font-family:monospace,monospace;
-    font-size:0.75em;
+    font-family: monospace, monospace;
+    font-size: 0.75em;
     color: #555;
     padding: 0;
     margin: 0;
     height: auto;
-    
+
     padding-left: 12px;
     margin-left: 60%;
 }
@@ -45,11 +49,11 @@ html, body {margin: 0; height: 100%; overflow: hidden}
     padding-left: 2px;
     padding-top: -1px;
     border-radius: 2px;
-    font-size:0.9em;
+    font-size: 0.9em;
 }
 
-.nodeParentSeparater{
-    color:#222;
+.nodeParentSeparater {
+    color: #222;
     font-weight: bold;
 }
 
@@ -70,7 +74,7 @@ html, body {margin: 0; height: 100%; overflow: hidden}
 }
 
 .akkordion-outer {
-  padding: 0;
+    padding: 0;
 }
 
 .nodeHeader {
@@ -91,7 +95,7 @@ html, body {margin: 0; height: 100%; overflow: hidden}
     border-radius: 2px 0px 0px 0px;
 }
 
-.nodeHeader[data-akkordion-active='true']::before { 
+.nodeHeader[data-akkordion-active='true']::before {
     font: normal normal normal 14px/1 'Font Awesome 5 Free';
     padding-right: 4px;
     content: "\f150";
@@ -114,8 +118,8 @@ html, body {margin: 0; height: 100%; overflow: hidden}
 
     /* I can't get this div to not overflow as much as it wants */
     max-height: 600px;
-    height:auto !important;
-    height:600px;
+    height: auto !important;
+    height: 600px;
 }
 
 #nodeDescription .akkordion-title {
@@ -134,7 +138,7 @@ html, body {margin: 0; height: 100%; overflow: hidden}
 #nodeNeighbors, #nodeSiblings, #nodeChildren {
     background-color: #d0d0d0;
     overflow-y: scroll;
-    max-height:200px;
+    max-height: 200px;
     padding-right: 5px;
 }
 
@@ -147,7 +151,7 @@ html, body {margin: 0; height: 100%; overflow: hidden}
 
     background-color: #bbb;
     color: #444;
-    font-size:1.2em;
+    font-size: 1.2em;
 
     margin-top: 2px;
 
@@ -181,14 +185,16 @@ html, body {margin: 0; height: 100%; overflow: hidden}
     background-color: rgba(0, 0, 0, .3);
 }
 
-#nodeDescription > div > div > div > ul { 
+#nodeDescription > div > div > div > ul {
     margin: 0;
     padding-left: 5px;
     list-style-type: none;
 }
+
 #nodeDescription > div > div > div > ul > li {
     text-indent: 0px;
 }
+
 #nodeDescription > div > div > div > ul > li:before {
     content: "-";
     text-indent: -5px;
@@ -203,13 +209,13 @@ html, body {margin: 0; height: 100%; overflow: hidden}
 
 .tooltip .tooltiptext {
     visibility: hidden;
-    font-family:monospace,monospace;
+    font-family: monospace, monospace;
     background-color: #444;
     color: #aaa;
     text-align: center;
     border-radius: 3px;
     padding: 3px;
-    font-size:0.6em;
+    font-size: 0.6em;
     margin-top: 20px;
     margin-left: -10px;
 

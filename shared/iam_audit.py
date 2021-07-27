@@ -1,19 +1,13 @@
 import json
-from datetime import datetime
-import pyjq
-import traceback
 import re
-import os.path
-
 from logging import CRITICAL
 from logging import getLogger
-from policyuniverse.policy import Policy
-from parliament import analyze_policy_string
 
-from netaddr import IPNetwork
+from parliament import analyze_policy_string
+from policyuniverse.policy import Policy
+
 from shared.common import Finding, make_list, get_us_east_1, get_current_policy_doc
-from shared.query import query_aws, get_parameter_file
-from shared.nodes import Account, Region
+from shared.nodes import Account
 
 getLogger("policyuniverse").setLevel(CRITICAL)
 KNOWN_BAD_POLICIES = {
@@ -38,16 +32,16 @@ def policy_action_count(policy_doc, location):
     actions_count = 0
     for stmt in policy.statements:
         if (
-            stmt.effect == "Allow"
-            and len(stmt.condition_entries) == 0
-            and stmt.resources == set("*")
+                stmt.effect == "Allow"
+                and len(stmt.condition_entries) == 0
+                and stmt.resources == set("*")
         ):
             actions_count += len(stmt.actions_expanded)
     return actions_count
 
 
 def is_admin_policy(
-    policy_doc, location, findings, region, privs_to_look_for, include_retricted
+        policy_doc, location, findings, region, privs_to_look_for, include_retricted
 ):
     # This attempts to identify policies that directly allow admin privs, or indirectly through possible
     # privilege escalation (ex. iam:PutRolePolicy to add an admin policy to itself).
@@ -59,9 +53,9 @@ def is_admin_policy(
             # this is bad.
             not_actions = make_list(stmt.get("NotAction", []))
             if (
-                not_actions != []
-                and stmt.get("Resource", "") == "*"
-                and stmt.get("Condition", "") == ""
+                    not_actions != []
+                    and stmt.get("Resource", "") == "*"
+                    and stmt.get("Condition", "") == ""
             ):
                 if "iam:*" in not_actions:
                     # This is used for PowerUsers, where they can do everything except IAM actions
@@ -97,8 +91,8 @@ def is_admin_policy(
                     if include_retricted:
                         return True
                     elif (
-                        stmt.get("Resource", "") == "*"
-                        and stmt.get("Condition", "") == ""
+                            stmt.get("Resource", "") == "*"
+                            and stmt.get("Condition", "") == ""
                     ):
                         return True
 
@@ -116,16 +110,16 @@ def check_for_bad_policy(findings, region, arn, policy_text):
         # and
         # https://github.com/awsdocs/iam-user-guide/blob/cfe14c674c494d07ba0ab952fe546fdd587da65d/doc_source/id_credentials_mfa_enable_virtual.md#permissions-required
         if (
-            statement.get("Sid", "") == "AllowIndividualUserToManageTheirOwnMFA"
-            or statement.get("Sid", "")
-            == "AllowIndividualUserToViewAndManageTheirOwnMFA"
+                statement.get("Sid", "") == "AllowIndividualUserToManageTheirOwnMFA"
+                or statement.get("Sid", "")
+                == "AllowIndividualUserToViewAndManageTheirOwnMFA"
         ):
             if "iam:DeactivateMFADevice" in make_list(statement.get("Action", [])):
                 findings.add(Finding(region, "IAM_BAD_MFA_POLICY", arn, policy_text))
                 return
         elif (
-            statement.get("Sid", "")
-            == "BlockAnyAccessOtherThanAboveUnlessSignedInWithMFA"
+                statement.get("Sid", "")
+                == "BlockAnyAccessOtherThanAboveUnlessSignedInWithMFA"
         ):
             if "iam:*" in make_list(statement.get("NotAction", [])):
                 findings.add(Finding(region, "IAM_BAD_MFA_POLICY", arn, policy_text))
@@ -154,7 +148,7 @@ def find_admins(accounts, args, findings):
 
 
 def find_admins_in_account(
-    region, findings, privs_to_look_for=None, include_restricted=False
+        region, findings, privs_to_look_for=None, include_restricted=False
 ):
     if privs_to_look_for is None:
         privs_to_look_for = [
@@ -196,28 +190,29 @@ def find_admins_in_account(
         analyzed_policy = analyze_policy_string(json.dumps(policy_doc))
         for f in analyzed_policy.findings:
             findings.add(
-                    Finding(
-                        region,
-                        "IAM_LINTER",
-                        policy["Arn"],
-                        resource_details={"issue": str(f.issue), "severity": str(f.severity), "location": str(f.location), "policy": policy_doc},
-                    )
+                Finding(
+                    region,
+                    "IAM_LINTER",
+                    policy["Arn"],
+                    resource_details={"issue": str(f.issue), "severity": str(f.severity), "location": str(f.location),
+                                      "policy": policy_doc},
                 )
+            )
 
         policy_action_counts[policy["Arn"]] = policy_action_count(policy_doc, location)
 
         if is_admin_policy(
-            policy_doc,
-            location,
-            findings,
-            region,
-            privs_to_look_for,
-            include_restricted,
+                policy_doc,
+                location,
+                findings,
+                region,
+                privs_to_look_for,
+                include_restricted,
         ):
             admin_policies.append(policy["Arn"])
             if (
-                "arn:aws:iam::aws:policy/AdministratorAccess" in policy["Arn"]
-                or "arn:aws:iam::aws:policy/IAMFullAccess" in policy["Arn"]
+                    "arn:aws:iam::aws:policy/AdministratorAccess" in policy["Arn"]
+                    or "arn:aws:iam::aws:policy/IAMFullAccess" in policy["Arn"]
             ):
                 # Ignore the admin policies that are obviously admin
                 continue
@@ -272,21 +267,22 @@ def find_admins_in_account(
             analyzed_policy = analyze_policy_string(json.dumps(policy_doc))
             for f in analyzed_policy.findings:
                 findings.add(
-                        Finding(
-                            region,
-                            "IAM_LINTER",
-                            role["Arn"],
-                            resource_details={"issue": str(f.issue), "severity": str(f.severity), "location": str(f.location), "policy": policy_doc},
-                        )
+                    Finding(
+                        region,
+                        "IAM_LINTER",
+                        role["Arn"],
+                        resource_details={"issue": str(f.issue), "severity": str(f.severity),
+                                          "location": str(f.location), "policy": policy_doc},
                     )
+                )
 
             if is_admin_policy(
-                policy_doc,
-                location,
-                findings,
-                region,
-                privs_to_look_for,
-                include_restricted,
+                    policy_doc,
+                    location,
+                    findings,
+                    region,
+                    privs_to_look_for,
+                    include_restricted,
             ):
                 if ':role/OrganizationAccountAccessRole' in role['Arn']:
                     # AWS creates this role and adds an inline policy to it granting full
@@ -402,12 +398,12 @@ def find_admins_in_account(
         for policy in group["GroupPolicyList"]:
             policy_doc = policy["PolicyDocument"]
             if is_admin_policy(
-                policy_doc,
-                location,
-                findings,
-                region,
-                privs_to_look_for,
-                include_restricted,
+                    policy_doc,
+                    location,
+                    findings,
+                    region,
+                    privs_to_look_for,
+                    include_restricted,
             ):
                 is_admin = True
                 findings.add(
@@ -454,21 +450,22 @@ def find_admins_in_account(
             analyzed_policy = analyze_policy_string(json.dumps(policy_doc))
             for f in analyzed_policy.findings:
                 findings.add(
-                        Finding(
-                            region,
-                            "IAM_LINTER",
-                            user["Arn"],
-                            resource_details={"issue": str(f.issue), "severity": str(f.severity), "location": str(f.location), "policy": policy_doc},
-                        )
+                    Finding(
+                        region,
+                        "IAM_LINTER",
+                        user["Arn"],
+                        resource_details={"issue": str(f.issue), "severity": str(f.severity),
+                                          "location": str(f.location), "policy": policy_doc},
                     )
+                )
 
             if is_admin_policy(
-                policy_doc,
-                location,
-                findings,
-                region,
-                privs_to_look_for,
-                include_restricted,
+                    policy_doc,
+                    location,
+                    findings,
+                    region,
+                    privs_to_look_for,
+                    include_restricted,
             ):
                 reasons_for_being_admin.append("Custom user policy: {}".format(policy["PolicyName"]))
                 findings.add(

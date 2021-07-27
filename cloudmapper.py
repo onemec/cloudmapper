@@ -26,9 +26,10 @@ USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 This script manages CloudMapper, a tool for analyzing AWS environments.
 """
 from __future__ import absolute_import, division, print_function
-import sys
-import pkgutil
+
 import importlib
+import pkgutil
+import sys
 
 __version__ = "2.9.1"
 

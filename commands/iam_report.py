@@ -1,19 +1,21 @@
 from __future__ import print_function
+
 import argparse
-import json
 import datetime
+import json
 import os.path
 from abc import ABCMeta
-from six import add_metaclass
-from jinja2 import Template
 from enum import Enum
-
 from logging import CRITICAL
 from logging import getLogger
+
+from jinja2 import Template
 from policyuniverse.policy import Policy
+from six import add_metaclass
+
 from shared.common import parse_arguments, get_regions
-from shared.query import query_aws, get_parameter_file
 from shared.nodes import Account, Region
+from shared.query import query_aws, get_parameter_file
 
 __description__ = "Create IAM report"
 getLogger("policyuniverse").setLevel(CRITICAL)
@@ -108,7 +110,7 @@ def get_access_advisor(region, principal_stats, json_account_auth_details, args)
                     service["LastAuthenticated"][0:10], "%Y-%m-%d"
                 )
                 service["days_since_last_use"] = (
-                    job_completion_date - last_access_date
+                        job_completion_date - last_access_date
                 ).days
                 if service["days_since_last_use"] < args.max_age:
                     stats["is_inactive"] = False
@@ -130,8 +132,8 @@ def get_service_count_and_used(service_last_accessed):
 def html_service_chart(principal, services_used, services_granted):
     chartid = "serviceChart" + principal
     return (
-        '<div style="width:30%"><canvas id="{}" width="100" height="15"></canvas></div>'
-        + '<script>makeServiceUnusedChart("{}", {}, {});</script>'
+            '<div style="width:30%"><canvas id="{}" width="100" height="15"></canvas></div>'
+            + '<script>makeServiceUnusedChart("{}", {}, {});</script>'
     ).format(chartid, chartid, services_used, services_granted - services_used)
 
 
@@ -511,10 +513,10 @@ def iam_report(accounts, config, args):
             last_use = "-"
             if service.get("LastAuthenticated", "-") != "-":
                 last_use = (
-                    report_date
-                    - datetime.datetime.strptime(
-                        service["LastAuthenticated"][0:10], "%Y-%m-%d"
-                    )
+                        report_date
+                        - datetime.datetime.strptime(
+                    service["LastAuthenticated"][0:10], "%Y-%m-%d"
+                )
                 ).days
 
             style = ""

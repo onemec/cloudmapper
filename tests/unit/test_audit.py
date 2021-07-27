@@ -1,9 +1,9 @@
 import unittest
-import json
-from nose.tools import assert_equal, assert_true, assert_false
 
-from shared.common import parse_arguments
+from nose.tools import assert_equal
+
 from shared.audit import audit
+from shared.common import parse_arguments
 
 
 class TestAudit(unittest.TestCase):

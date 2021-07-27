@@ -22,10 +22,12 @@ WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWIS
 USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ---------------------------------------------------------------------------
 """
-import pyjq
 from abc import ABCMeta
+
+import pyjq
 from netaddr import IPNetwork, IPAddress
 from six import add_metaclass
+
 from shared.query import query_aws, get_parameter_file
 
 
@@ -47,9 +49,9 @@ def get_name(node, default):
 def is_public_ip(ip):
     ip = IPAddress(ip)
     if (
-        ip in IPNetwork("10.0.0.0/8")
-        or ip in IPNetwork("172.16.0.0/12")
-        or ip in IPNetwork("192.168.0.0/16")
+            ip in IPNetwork("10.0.0.0/8")
+            or ip in IPNetwork("172.16.0.0/12")
+            or ip in IPNetwork("192.168.0.0/16")
     ):
         return False
     return True
@@ -281,7 +283,7 @@ class Subnet(Node):
             parent.region.name, parent.account.local_id, self._local_id
         )
         self._name = (
-            get_name(json_blob, "SubnetId") + " (" + json_blob["CidrBlock"] + ")"
+                get_name(json_blob, "SubnetId") + " (" + json_blob["CidrBlock"] + ")"
         )
         self._type = "subnet"
         super(Subnet, self).__init__(parent, json_blob)
@@ -588,7 +590,7 @@ class VpcEndpoint(Leaf):
 
         # The ServiceName looks like com.amazonaws.us-east-1.sqs
         # So I want the last section, "sqs"
-        self._name = json_blob["ServiceName"][json_blob["ServiceName"].rfind(".") + 1 :]
+        self._name = json_blob["ServiceName"][json_blob["ServiceName"].rfind(".") + 1:]
 
         if json_blob["VpcEndpointType"] == "Gateway":
             # The Gateway Endpoints don't live in subnets and don't have Security Groups.
@@ -758,9 +760,9 @@ class Redshift(Leaf):
             matched_subnet_group = {}
             for subnet_group in subnet_groups_json["ClusterSubnetGroups"]:
                 if (
-                    vpc_id == subnet_group["VpcId"]
-                    and cluster_subnet_group_name
-                    == subnet_group["ClusterSubnetGroupName"]
+                        vpc_id == subnet_group["VpcId"]
+                        and cluster_subnet_group_name
+                        == subnet_group["ClusterSubnetGroupName"]
                 ):
                     matched_subnet_group = subnet_group
             if matched_subnet_group == {}:
@@ -780,7 +782,7 @@ class Redshift(Leaf):
                     # We have a subnet ID that we know the cluster can be part of, now check if there is actually a node there
                     for cluster_node in self._json_blob["ClusterNodes"]:
                         if IPAddress(cluster_node["PrivateIPAddress"]) in IPNetwork(
-                            subnet["CidrBlock"]
+                                subnet["CidrBlock"]
                         ):
                             subnets_with_cluster_nodes.append(subnet["SubnetId"])
 

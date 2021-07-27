@@ -23,16 +23,17 @@ USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ---------------------------------------------------------------------------
 """
 
+import argparse
+import copy
+import itertools
 import json
 import operator
-import itertools
-import argparse
-import pyjq
-import copy
 import urllib.parse
+
+import pyjq
 from netaddr import IPNetwork, IPAddress
+
 from shared.common import get_account, get_regions, is_external_cidr
-from shared.query import query_aws, get_parameter_file
 from shared.nodes import (
     Account,
     Region,
@@ -51,6 +52,7 @@ from shared.nodes import (
     Cidr,
     Connection,
 )
+from shared.query import query_aws, get_parameter_file
 
 __description__ = "Generate network connection information file"
 
@@ -241,8 +243,8 @@ def get_connections(cidrs, vpc, outputfilter):
 
                     # Ensure it is possible for instances in this VPC to be in the CIDR
                     if not (
-                        IPNetwork(sourceVpc.cidr) in IPNetwork(cidr)
-                        or IPNetwork(cidr) in IPNetwork(sourceVpc.cidr)
+                            IPNetwork(sourceVpc.cidr) in IPNetwork(cidr)
+                            or IPNetwork(cidr) in IPNetwork(sourceVpc.cidr)
                     ):
                         # The CIDR from the security group does not overlap with the CIDR of the VPC,
                         # so skip it
@@ -256,7 +258,7 @@ def get_connections(cidrs, vpc, outputfilter):
                                 # So connect this instance (sourceInstance) to every instance
                                 # in the SG.
                                 for targetInstance in sg_to_instance_mapping.get(
-                                    sg["GroupId"], {}
+                                        sg["GroupId"], {}
                                 ):
                                     add_connection(
                                         connections, sourceInstance, targetInstance, sg
@@ -281,22 +283,22 @@ def get_connections(cidrs, vpc, outputfilter):
         if outputfilter.get("internal_edges", True):
             # Connect allowed in Security Groups
             for ingress_sg in pyjq.all(
-                ".IpPermissions[].UserIdGroupPairs[].GroupId", sg
+                    ".IpPermissions[].UserIdGroupPairs[].GroupId", sg
             ):
                 # We have an SG and a list of SG's it allows in
                 for target in sg_to_instance_mapping.get(sg["GroupId"], {}):
                     # We have an instance and a list of SG's it allows in
                     for source in sg_to_instance_mapping.get(ingress_sg, {}):
                         if (
-                            not outputfilter.get("inter_rds_edges", True)
-                            and (
+                                not outputfilter.get("inter_rds_edges", True)
+                                and (
                                 source.node_type == "rds"
                                 or source.node_type == "rds_rr"
-                            )
-                            and (
+                        )
+                                and (
                                 target.node_type == "rds"
                                 or target.node_type == "rds_rr"
-                            )
+                        )
                         ):
                             continue
                         add_connection(connections, source, target, sg)
@@ -461,8 +463,8 @@ def build_data_structure(account_data, config, outputfilter):
                         if node.tags:
                             for tag in node.tags:
                                 if (
-                                    tag.get("Key", "") == pair[0]
-                                    and tag.get("Value", "") == pair[1]
+                                        tag.get("Key", "") == pair[0]
+                                        and tag.get("Value", "") == pair[1]
                                 ):
                                     condition_matches += 1
                     # We have a match if all of the conditions matched
@@ -586,8 +588,8 @@ def build_data_structure(account_data, config, outputfilter):
 
             # Check if we have a CIDR node that doesn't match the smallest one possible.
             if (
-                cidrs[cidr_string].name
-                != config["cidrs"][smallest_matched_cidr_string]["name"]
+                    cidrs[cidr_string].name
+                    != config["cidrs"][smallest_matched_cidr_string]["name"]
             ):
                 # See if we need to create the larger known range
                 if cidrs.get(smallest_matched_cidr_string, "") == "":
@@ -638,8 +640,8 @@ def build_data_structure(account_data, config, outputfilter):
     MAX_NODES_FOR_WARNING = 200
     MAX_EDGES_FOR_WARNING = 500
     if (
-        total_number_of_nodes > MAX_NODES_FOR_WARNING
-        or len(connections) > MAX_EDGES_FOR_WARNING
+            total_number_of_nodes > MAX_NODES_FOR_WARNING
+            or len(connections) > MAX_EDGES_FOR_WARNING
     ):
         log(
             "WARNING: There are {} total nodes and {} total edges.".format(
@@ -661,7 +663,7 @@ def prepare(account, config, outputfilter):
     """Collect the data and write it to a file"""
     cytoscape_json = build_data_structure(account, config, outputfilter)
     if not outputfilter["node_data"]:
-        filtered_cytoscape_json=[]
+        filtered_cytoscape_json = []
         for node in cytoscape_json:
             filtered_node = node.copy()
             filtered_node['data']['node_data'] = {}

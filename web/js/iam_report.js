@@ -5,29 +5,29 @@ function makeServiceUnusedChart(id, used, unused) {
         data: {
             labels: ["Services"],
             datasets: [
-            {
-                label: 'Used',
-                data: [used],
-                backgroundColor: 'rgba(0, 255, 0, 0.5)',
-                borderWidth: 1
-            },
-            {
-                label: 'Unused',
-                data: [unused],
-                backgroundColor: 'rgba(255, 0, 0, 0.5)',
-                borderWidth: 1
-            }]
+                {
+                    label: 'Used',
+                    data: [used],
+                    backgroundColor: 'rgba(0, 255, 0, 0.5)',
+                    borderWidth: 1
+                },
+                {
+                    label: 'Unused',
+                    data: [unused],
+                    backgroundColor: 'rgba(255, 0, 0, 0.5)',
+                    borderWidth: 1
+                }]
         },
         options: {
-            legend: { display: false},
-            
-            
+            legend: {display: false},
+
+
             /*tooltips: {mode: 'index', intersect: false},*/
             tooltips: {
                 // Disable the on-canvas tooltip
                 enabled: false,
 
-                custom: function(tooltipModel) {
+                custom: function (tooltipModel) {
                     // Tooltip Element
                     var tooltipEl = document.getElementById('chartjs-tooltip');
 
@@ -64,12 +64,12 @@ function makeServiceUnusedChart(id, used, unused) {
 
                         var innerHtml = '<thead>';
 
-                        titleLines.forEach(function(title) {
+                        titleLines.forEach(function (title) {
                             innerHtml += '<tr><th>' + title + '</th></tr>';
                         });
                         innerHtml += '</thead><tbody>';
 
-                        bodyLines.forEach(function(body, i) {
+                        bodyLines.forEach(function (body, i) {
                             var colors = tooltipModel.labelColors[i];
                             var style = 'background:' + colors.backgroundColor;
                             style += '; border-color:' + colors.borderColor;
@@ -98,7 +98,7 @@ function makeServiceUnusedChart(id, used, unused) {
                     tooltipEl.style.pointerEvents = 'none';
                 }
             },
-            
+
             scales: {
                 yAxes: [{
                     stacked: true,
@@ -108,7 +108,7 @@ function makeServiceUnusedChart(id, used, unused) {
                 xAxes: [{
                     gridLines: {display: false},
                     ticks: {
-                        beginAtZero:true,
+                        beginAtZero: true,
                         max: 200,
                         min: 0,
                         display: false

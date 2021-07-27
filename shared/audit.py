@@ -1,18 +1,18 @@
-import json
-import yaml
-from os.path import exists
-import pyjq
-import traceback
-import re
-import pkgutil
 import importlib
 import inspect
-
+import json
+import pkgutil
+import re
+import traceback
 from logging import CRITICAL
 from logging import getLogger
+from os.path import exists
+
+import pyjq
+import yaml
+from netaddr import IPNetwork
 from policyuniverse.policy import Policy
 
-from netaddr import IPNetwork
 from shared.common import (
     make_list,
     get_regions,
@@ -22,9 +22,9 @@ from shared.common import (
     get_collection_date,
     days_between,
 )
-from shared.query import query_aws, get_parameter_file
-from shared.nodes import Account, Region, get_name
 from shared.iam_audit import find_admins_in_account
+from shared.nodes import Account, Region, get_name
+from shared.query import query_aws, get_parameter_file
 
 # Global
 custom_filter = None
@@ -54,7 +54,7 @@ def finding_is_filtered(finding, conf, minimum_severity="LOW"):
     severity_choices = ["CRITICAL", "HIGH", "MEDIUM", "LOW", "INFO", "MUTE"]
     finding_severity = conf["severity"].upper()
     if severity_choices.index(finding_severity) > severity_choices.index(
-        minimum_severity
+            minimum_severity
     ):
         return True
 
@@ -110,9 +110,9 @@ def audit_s3_buckets(findings, region):
                 policy = Policy(policy)
                 if policy.is_internet_accessible():
                     if (
-                        len(policy.statements) == 1
-                        and len(policy.statements[0].actions) == 1
-                        and "s3:GetObject" in policy.statements[0].actions
+                            len(policy.statements) == 1
+                            and len(policy.statements[0].actions) == 1
+                            and "s3:GetObject" in policy.statements[0].actions
                     ):
                         findings.add(
                             Finding(region, "S3_PUBLIC_POLICY_GETOBJECT_ONLY", bucket)
@@ -145,9 +145,9 @@ def audit_s3_buckets(findings, region):
             for grant in file_json["Grants"]:
                 uri = grant["Grantee"].get("URI", "")
                 if (
-                    uri == "http://acs.amazonaws.com/groups/global/AllUsers"
-                    or uri
-                    == "http://acs.amazonaws.com/groups/global/AuthenticatedUsers"
+                        uri == "http://acs.amazonaws.com/groups/global/AllUsers"
+                        or uri
+                        == "http://acs.amazonaws.com/groups/global/AuthenticatedUsers"
                 ):
                     findings.add(
                         Finding(region, "S3_PUBLIC_ACL", bucket, resource_details=grant)
@@ -177,10 +177,10 @@ def audit_s3_block_policy(findings, region, account_name):
     else:
         conf = block_policy_json["PublicAccessBlockConfiguration"]
         if (
-            not conf["BlockPublicAcls"]
-            or not conf["BlockPublicPolicy"]
-            or not conf["IgnorePublicAcls"]
-            or not conf["RestrictPublicBuckets"]
+                not conf["BlockPublicAcls"]
+                or not conf["BlockPublicPolicy"]
+                or not conf["IgnorePublicAcls"]
+                or not conf["RestrictPublicBuckets"]
         ):
             findings.add(
                 Finding(
@@ -262,8 +262,8 @@ def audit_iam(findings, region):
 
             for fget in s3_get_findings:
                 if (
-                    fget.issue_id == "IAM_UNEXPECTED_ADMIN_PRINCIPAL"
-                    and fget.resource_id == flist.resource_id
+                        fget.issue_id == "IAM_UNEXPECTED_ADMIN_PRINCIPAL"
+                        and fget.resource_id == flist.resource_id
                 ):
                     # If we are here, then the principal can list S3 buckets and get objects
                     # from them, and is not an unexpected service. Ensure we haven't already
@@ -272,8 +272,8 @@ def audit_iam(findings, region):
                     already_recorded = False
                     for f in findings:
                         if (
-                            f.resource_id == fget.resource_id
-                            and f.issue_id == "IAM_UNEXPECTED_ADMIN_PRINCIPAL"
+                                f.resource_id == fget.resource_id
+                                and f.issue_id == "IAM_UNEXPECTED_ADMIN_PRINCIPAL"
                         ):
                             already_recorded = True
                             break
@@ -450,8 +450,8 @@ def audit_users(findings, region):
                     )
 
         if (
-            user["access_key_1_active"] == "true"
-            and user["access_key_2_active"] == "true"
+                user["access_key_1_active"] == "true"
+                and user["access_key_2_active"] == "true"
         ):
             age_of_key1 = days_between(
                 collection_date, user["access_key_1_last_rotated"]
@@ -730,8 +730,8 @@ def audit_es(findings, region):
         # ES clusters or either public, with an "Endpoint" (singular), which is bad, or
         # they are VPC-only, in which case they have an "Endpoints" (plural) array containing a "vpc" element
         if (
-            policy_file_json["DomainStatus"].get("Endpoint", "") != ""
-            or policy_file_json["DomainStatus"].get("Endpoints", {}).get("vpc", "") == ""
+                policy_file_json["DomainStatus"].get("Endpoint", "") != ""
+                or policy_file_json["DomainStatus"].get("Endpoints", {}).get("vpc", "") == ""
         ):
             if policy.is_internet_accessible() or policy_string == "{}":
                 findings.add(
@@ -851,8 +851,8 @@ def audit_elbv1(findings, region):
 
         for attribute in attributes_json.get("LoadBalancerAttributes", [])['AdditionalAttributes']:
             if (
-                attribute["Key"] == "elb.http.desyncmitigationmode"
-                and attribute["Value"] != "strictest"
+                    attribute["Key"] == "elb.http.desyncmitigationmode"
+                    and attribute["Value"] != "strictest"
             ):
                 findings.add(Finding(region, "ELBV1_DESYNC_MITIGATION", lb_name))
 
@@ -870,8 +870,8 @@ def audit_elbv2(findings, region):
 
         for attribute in attributes_json.get("Attributes", []):
             if (
-                attribute["Key"] == "routing.http.drop_invalid_header_fields.enabled"
-                and attribute["Value"] == "false"
+                    attribute["Key"] == "routing.http.drop_invalid_header_fields.enabled"
+                    and attribute["Value"] == "false"
             ):
                 findings.add(Finding(region, "REQUEST_SMUGGLING", arn))
 
@@ -927,7 +927,7 @@ def audit_sg(findings, region):
                 cidr = ip_ranges["CidrIp"]
                 for cidr_seen in cidrs_seen:
                     if IPNetwork(cidr_seen) in IPNetwork(cidr) or IPNetwork(
-                        cidr
+                            cidr
                     ) in IPNetwork(cidr_seen):
                         findings.add(
                             Finding(
@@ -1218,7 +1218,7 @@ def audit(accounts):
             try:
                 if custom_auditor is not None:
                     for name, method in inspect.getmembers(
-                        custom_auditor, inspect.isfunction
+                            custom_auditor, inspect.isfunction
                     ):
                         if name.startswith("custom_audit_"):
                             method(findings, region)

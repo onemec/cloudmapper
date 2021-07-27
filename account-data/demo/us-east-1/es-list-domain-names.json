@@ -1,7 +1,7 @@
 {
-    "DomainNames": [
-        {
-            "DomainName": "myvpcdomain"
-        }
-    ]
+  "DomainNames": [
+    {
+      "DomainName": "myvpcdomain"
+    }
+  ]
 }

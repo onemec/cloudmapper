@@ -8,12 +8,11 @@ get_privilege_statements(...) works by looking for statements that match each pr
 """
 
 import argparse
-import yaml
 import json
-import parliament
-from parliament.policy import Policy
 
-from shared.common import parse_arguments, get_current_policy_doc, make_list
+import parliament
+
+from shared.common import parse_arguments, get_current_policy_doc
 
 __description__ = "[proof-of-concept] Check who has access to a resource"
 
@@ -123,7 +122,7 @@ def get_condition_result(condition_function, condition_values, resource_arn, pri
 
 
 def get_privilege_statements(
-    policy_doc, privilege_matches, resource_arn, principal, policy_identifier
+        policy_doc, privilege_matches, resource_arn, principal, policy_identifier
 ):
     policy = parliament.policy.Policy(policy_doc)
     policy.analyze()
@@ -140,7 +139,7 @@ def get_privilege_statements(
             expanded_reference = replace_principal_variables(reference, principal)
             # TODO I need to do something for NotResource and NotAction
             if parliament.is_arn_match(
-                privilege_match["resource_type"], expanded_reference, resource_arn
+                    privilege_match["resource_type"], expanded_reference, resource_arn
             ):
                 # We now have a bunch of statements that match the privileges and resource of interest.
                 # Now we need to check if the statement is allowed by its conditions.
@@ -239,8 +238,8 @@ def access_check_command(accounts, config, args):
         for action in expanded_actions:
             for privilege in privilege_matches:
                 if (
-                    action["service"] == privilege["privilege_prefix"]
-                    and action["action"] == privilege["privilege_name"]
+                        action["service"] == privilege["privilege_prefix"]
+                        and action["action"] == privilege["privilege_name"]
                 ):
                     new_privilege_matches.append(privilege)
         privilege_matches = new_privilege_matches
@@ -436,8 +435,8 @@ def is_allowed(privilege_prefix, privilege_name, statements):
     # Find all statements that use this privilege
     for privileged_statement in statements:
         if (
-            privileged_statement["privilege"]["privilege_prefix"] == privilege_prefix
-            and privileged_statement["privilege"]["privilege_name"] == privilege_name
+                privileged_statement["privilege"]["privilege_prefix"] == privilege_prefix
+                and privileged_statement["privilege"]["privilege_name"] == privilege_name
         ):
             stmts_for_privilege.extend(privileged_statement["matching_statements"])
 
@@ -455,7 +454,7 @@ def is_allowed(privilege_prefix, privilege_name, statements):
 
 
 def get_allowed_privileges(
-    privilege_matches, privileged_statements, boundary_statements
+        privilege_matches, privileged_statements, boundary_statements
 ):
     """
     """
@@ -463,9 +462,9 @@ def get_allowed_privileges(
     for privilege in privilege_matches:
         if boundary_statements is not None:
             if not is_allowed(
-                privilege["privilege_prefix"],
-                privilege["privilege_name"],
-                boundary_statements,
+                    privilege["privilege_prefix"],
+                    privilege["privilege_name"],
+                    boundary_statements,
             ):
                 continue
 

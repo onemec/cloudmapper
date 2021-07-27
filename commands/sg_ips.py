@@ -1,7 +1,8 @@
 from collections import OrderedDict
 from os import path
-from netaddr import IPNetwork
+
 import pyjq
+from netaddr import IPNetwork
 
 from shared.common import parse_arguments, query_aws, get_regions, is_external_cidr, is_unblockable_cidr
 from shared.nodes import Account, Region
@@ -59,7 +60,7 @@ def get_cidrs_for_account(account, cidrs):
                     cidr = ip_ranges["CidrIp"]
                     for cidr_seen in cidrs_seen:
                         if IPNetwork(cidr_seen) in IPNetwork(cidr) or IPNetwork(
-                            cidr
+                                cidr
                         ) in IPNetwork(cidr_seen):
                             print(
                                 "WARNING: Overlapping CIDRs in {}, {} and {}".format(

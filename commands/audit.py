@@ -1,9 +1,8 @@
 import argparse
-import yaml
 import json
 
-from shared.common import parse_arguments
 from shared.audit import audit, load_audit_config, finding_is_filtered
+from shared.common import parse_arguments
 
 __description__ = "Identify potential issues such as public S3 buckets"
 
@@ -23,7 +22,7 @@ def audit_command(accounts, config, args):
 
         if args.json:
             finding = json.loads(str(finding))
-            finding['finding_type_metadata']= conf
+            finding['finding_type_metadata'] = conf
             print(json.dumps(finding, sort_keys=True))
         elif args.markdown:
             print(

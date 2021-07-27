@@ -1,10 +1,12 @@
 from __future__ import print_function
+
 import argparse
-import json
 import datetime
+import json
+import sys
+
 import pyjq
 import yaml
-import sys
 from netaddr import IPNetwork
 
 from shared.nodes import Account, Region
@@ -123,9 +125,9 @@ def make_list(v):
 def is_external_cidr(cidr):
     ipnetwork = IPNetwork(cidr)
     if (
-        ipnetwork in IPNetwork("10.0.0.0/8")
-        or ipnetwork in IPNetwork("172.16.0.0/12")
-        or ipnetwork in IPNetwork("192.168.0.0/16")
+            ipnetwork in IPNetwork("10.0.0.0/8")
+            or ipnetwork in IPNetwork("172.16.0.0/12")
+            or ipnetwork in IPNetwork("192.168.0.0/16")
     ):
         return False
     return True
@@ -134,15 +136,15 @@ def is_external_cidr(cidr):
 def is_unblockable_cidr(cidr):
     ipnetwork = IPNetwork(cidr)
     if (
-        ipnetwork in IPNetwork("169.254.0.0/16")
-        or ipnetwork in IPNetwork("127.0.0.0/8")  # link local
-        or ipnetwork in IPNetwork("192.0.2.0/24")  # loopback
-        or ipnetwork in IPNetwork("198.51.100.0/24")  # Test network from RFC 5737
-        or ipnetwork in IPNetwork("203.0.113.0/24")  # Test network
-        or ipnetwork in IPNetwork("224.0.0.0/4")  # Test network
-        or ipnetwork in IPNetwork("240.0.0.0/5")  # class D multicast
-        or ipnetwork in IPNetwork("248.0.0.0/5")  # class E reserved
-        or ipnetwork in IPNetwork("255.255.255.255/32")  # reserved  # broadcast
+            ipnetwork in IPNetwork("169.254.0.0/16")
+            or ipnetwork in IPNetwork("127.0.0.0/8")  # link local
+            or ipnetwork in IPNetwork("192.0.2.0/24")  # loopback
+            or ipnetwork in IPNetwork("198.51.100.0/24")  # Test network from RFC 5737
+            or ipnetwork in IPNetwork("203.0.113.0/24")  # Test network
+            or ipnetwork in IPNetwork("224.0.0.0/4")  # Test network
+            or ipnetwork in IPNetwork("240.0.0.0/5")  # class D multicast
+            or ipnetwork in IPNetwork("248.0.0.0/5")  # class E reserved
+            or ipnetwork in IPNetwork("255.255.255.255/32")  # reserved  # broadcast
     ):
         return True
     return False

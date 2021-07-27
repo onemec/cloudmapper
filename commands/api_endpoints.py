@@ -1,8 +1,8 @@
 from __future__ import print_function
-from shared.common import parse_arguments, get_regions
-from shared.query import query_aws, get_parameter_file
-from shared.nodes import Account, Region
 
+from shared.common import parse_arguments, get_regions
+from shared.nodes import Account, Region
+from shared.query import query_aws, get_parameter_file
 
 __description__ = "[Deprecated] Map API Gateway end-points"
 

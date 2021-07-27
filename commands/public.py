@@ -1,6 +1,8 @@
 from __future__ import print_function
-import sys
+
 import json
+import sys
+
 from shared.common import parse_arguments
 from shared.public import get_public_nodes
 
@@ -16,7 +18,7 @@ def public(accounts, config):
             all_accounts.append(public_node)
         for warning in warnings:
             print("WARNING: {}".format(warning), file=sys.stderr)
-    
+
     print(json.dumps(all_accounts, indent=4, sort_keys=True))
 
 

@@ -1,6 +1,7 @@
-import unittest
 import argparse
-from nose.tools import assert_equal, assert_true, assert_false
+import unittest
+
+from nose.tools import assert_equal
 
 from shared.common import (
     make_list,
@@ -8,7 +9,6 @@ from shared.common import (
     get_account_stats,
     get_account,
     get_collection_date,
-    get_access_advisor_active_counts,
 )
 
 

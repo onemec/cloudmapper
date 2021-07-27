@@ -25,6 +25,7 @@ import argparse
 import os
 import posixpath
 import socket
+
 from six.moves import urllib
 from six.moves.BaseHTTPServer import HTTPServer
 from six.moves.SimpleHTTPServer import SimpleHTTPRequestHandler
@@ -57,7 +58,7 @@ class MyHTTPRequestHandler(SimpleHTTPRequestHandler):
             if word in (os.curdir, os.pardir):
                 continue
             if "?" in word:
-                word = word[0 : word.index("?")]
+                word = word[0: word.index("?")]
             path = os.path.join(path, word)
         return path
 

@@ -17,35 +17,33 @@ USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ---------------------------------------------------------------------------
 */
 
-function makeActiveChart(id, labels, num_active, num_inactive)
-{
-    make2valueChart(id, labels, "Active", "Inactive", num_active, num_inactive, good_color='rgba(0, 255, 0, 0.5)', bad_color='rgba(100, 100, 100, 0.5)')
+function makeActiveChart(id, labels, num_active, num_inactive) {
+    make2valueChart(id, labels, "Active", "Inactive", num_active, num_inactive, good_color = 'rgba(0, 255, 0, 0.5)', bad_color = 'rgba(100, 100, 100, 0.5)')
 }
 
-function make2valueChart(id, labels, good_label, bad_label, good_value, bad_value, good_color='rgba(0, 255, 0, 0.5)', bad_color='rgba(255, 0, 0, 0.5)')
-{
+function make2valueChart(id, labels, good_label, bad_label, good_value, bad_value, good_color = 'rgba(0, 255, 0, 0.5)', bad_color = 'rgba(255, 0, 0, 0.5)') {
     datasets =
-    [
-        {
-            label: good_label,
-            data: [good_value],
-            backgroundColor: good_color,
-            borderWidth: 1
-        },
-        {
-            label: bad_label,
-            data: [bad_value],
-            backgroundColor: bad_color,
-            borderWidth: 1
-        }
-    ];
+        [
+            {
+                label: good_label,
+                data: [good_value],
+                backgroundColor: good_color,
+                borderWidth: 1
+            },
+            {
+                label: bad_label,
+                data: [bad_value],
+                backgroundColor: bad_color,
+                borderWidth: 1
+            }
+        ];
 
     makeChart(id, labels, datasets)
 }
 
-function makeChart(id, labels, datasets, legend=false, x_axes=false, y_axes=false) {
+function makeChart(id, labels, datasets, legend = false, x_axes = false, y_axes = false) {
     var ctx = document.getElementById(id).getContext('2d');
-    
+
     var myChart = new Chart(ctx, {
         type: 'horizontalBar',
         data: {
@@ -54,15 +52,15 @@ function makeChart(id, labels, datasets, legend=false, x_axes=false, y_axes=fals
         },
         options: {
 
-            legend: { display: legend},
-            
-            
+            legend: {display: legend},
+
+
             /*tooltips: {mode: 'index', intersect: false},*/
             tooltips: {
                 // Disable the on-canvas tooltip
                 enabled: false,
 
-                custom: function(tooltipModel) {
+                custom: function (tooltipModel) {
                     // Tooltip Element
                     var tooltipEl = document.getElementById('chartjs-tooltip');
 
@@ -99,12 +97,12 @@ function makeChart(id, labels, datasets, legend=false, x_axes=false, y_axes=fals
 
                         var innerHtml = '<thead>';
 
-                        titleLines.forEach(function(title) {
+                        titleLines.forEach(function (title) {
                             innerHtml += '<tr><th>' + title + '</th></tr>';
                         });
                         innerHtml += '</thead><tbody>';
 
-                        bodyLines.forEach(function(body, i) {
+                        bodyLines.forEach(function (body, i) {
                             var colors = tooltipModel.labelColors[i];
                             var style = 'background:' + colors.backgroundColor;
                             style += '; border-color:' + colors.borderColor;
@@ -133,7 +131,7 @@ function makeChart(id, labels, datasets, legend=false, x_axes=false, y_axes=fals
                     tooltipEl.style.pointerEvents = 'none';
                 }
             },
-            
+
             scales: {
                 yAxes: [{
                     stacked: true,
@@ -143,7 +141,7 @@ function makeChart(id, labels, datasets, legend=false, x_axes=false, y_axes=fals
                 xAxes: [{
                     gridLines: {display: false},
                     ticks: {
-                        beginAtZero:true,
+                        beginAtZero: true,
                         min: 0,
                         display: x_axes
                     },

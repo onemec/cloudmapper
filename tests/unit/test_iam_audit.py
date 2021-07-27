@@ -1,9 +1,9 @@
 import unittest
-import json
-from nose.tools import assert_equal, assert_true, assert_false
 
-from shared.iam_audit import find_admins
+from nose.tools import assert_equal
+
 from shared.common import parse_arguments
+from shared.iam_audit import find_admins
 
 
 class TestIamAudit(unittest.TestCase):

@@ -1,6 +1,4 @@
 from __future__ import print_function
-from shared.query import query_aws, get_parameter_file
-from shared.common import Finding
 
 # To use custom auditing, you must copy this file to ./private_commands/custom_auditor.py
 # and uncomment and modify the functions below.
@@ -51,7 +49,7 @@ __description__ = "Custom auditing functions"
 #     # disable other regions and therefore only care about issues in ap-southeast-1.
 #     if finding.issue_id == 'GUARDDUTY_OFF' and finding.region.name not in ['ap-southeast-1']:
 #         return True
-    
+
 #     # Accessible data includes:
 #     # - finding.issue_id: Ex. "GUARDDUTY_OFF"
 #     # - finding.region.name: Ex. "ap-southeast-1"
@@ -65,5 +63,5 @@ __description__ = "Custom auditing functions"
 #     # - conf["description"]
 
 #     # Note that you could also modify the title, severity, etc.
-    
+
 #     return False

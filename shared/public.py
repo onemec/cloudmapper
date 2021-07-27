@@ -1,11 +1,12 @@
 from __future__ import print_function
+
 import json
-import os
+
 import pyjq
 
-from shared.nodes import Account, Region, is_public_ip
 from commands.prepare import build_data_structure
 from shared.common import get_regions, query_aws
+from shared.nodes import Account, Region, is_public_ip
 
 
 def regroup_ranges(rgs):
@@ -93,7 +94,7 @@ def get_public_nodes(account, config, use_cache=False):
 
     # Look at all the edges for ones connected to the public Internet (0.0.0.0/0)
     for edge in pyjq.all(
-        '.[].data|select(.type=="edge")|select(.source=="0.0.0.0/0")', network
+            '.[].data|select(.type=="edge")|select(.source=="0.0.0.0/0")', network
     ):
 
         # Find the node at the other end of this edge
@@ -154,7 +155,7 @@ def get_public_nodes(account, config, use_cache=False):
             )
             # I would need to redo this code in order to get the name of the security group
             public_sgs[sg_group_allowing_all_protocols] = {"public_ports": "0-65535"}
-        
+
         # from_port and to_port mean the beginning and end of a port range
         # We only care about TCP (6) and UDP (17)
         # For more info see https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/security-group-rules-reference.html

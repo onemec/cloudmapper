@@ -1,13 +1,15 @@
 import argparse
-from os import path, listdir
 import json
-import yaml
-import pyjq
 import urllib.parse
+from os import path, listdir
+
+import pyjq
+import yaml
 
 from shared.common import parse_arguments, make_list, query_aws, get_regions, get_account_by_id
 
 __description__ = "Create Web Of Trust diagram for accounts"
+
 
 # TODO: This command would benefit from a few days of work and some sample data sets to improve:
 # - How saml providers are identified. Currently only Okta is identified, and that's a hack.
@@ -42,7 +44,7 @@ def add_connection(connections, source, target, reason):
 class Account(object):
     parent = None
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, **kwargs):
 
         json_blob = kwargs.get("json_blob", None)
         account_id = kwargs.get("account_id", None)
@@ -93,7 +95,7 @@ class Connection(object):
         return self._target
 
     def __key(self):
-        return (self._source.id, self._target.id, self._source.id, self._type)
+        return self._source.id, self._target.id, self._source.id, self._type
 
     def __eq__(self, other):
         return self.__key() == other.__key()
@@ -264,7 +266,7 @@ def get_iam_trusts(account, nodes, connections, connections_to_get):
                         elif "cognito-identity.amazonaws.com" in saml_provider_arn.lower():
                             continue
                         elif "www.amazon.com" in saml_provider_arn.lower():
-                            node = Account(
+                            Account(
                                 json_blob={
                                     "id": "Amazon.com",
                                     "name": "Amazon.com",
@@ -307,7 +309,7 @@ def get_iam_trusts(account, nodes, connections, connections_to_get):
                     for p in pyjq.all(".Policies[]", iam):
                         if p["Arn"] == m["PolicyArn"]:
                             for policy_doc in p["PolicyVersionList"]:
-                                if policy_doc["IsDefaultVersion"] == True:
+                                if policy_doc["IsDefaultVersion"]:
                                     if is_admin_policy(policy_doc["Document"]):
                                         access_type = "admin"
                 for policy in role["RolePolicyList"]:
@@ -316,7 +318,7 @@ def get_iam_trusts(account, nodes, connections, connections_to_get):
                         access_type = "admin"
 
                 if (access_type == "admin" and connections_to_get["admin"]) or (
-                    access_type != "admin" and connections_to_get["iam_nonadmin"]
+                        access_type != "admin" and connections_to_get["iam_nonadmin"]
                 ):
                     connections[Connection(node, account, access_type)] = []
     return
@@ -330,7 +332,7 @@ def get_s3_trusts(account, nodes, connections):
         f
         for f in listdir(policy_dir)
         if path.isfile(path.join(policy_dir, f))
-        and path.getsize(path.join(policy_dir, f)) > 4
+           and path.getsize(path.join(policy_dir, f)) > 4
     ]:
         s3_policy = json.load(open(path.join(policy_dir, s3_policy_file)))
         s3_policy = json.loads(s3_policy["Policy"])
@@ -374,7 +376,7 @@ def get_s3_trusts(account, nodes, connections):
                         actions = [actions]
                     for action in actions:
                         if not action.startswith("s3:List") and not action.startswith(
-                            "s3:Get"
+                                "s3:Get"
                         ):
                             access_type = "s3"
                             break
@@ -419,9 +421,9 @@ def weboftrust(args, accounts, config):
     for account in accounts:
         # Check if the account data exists
         if not path.exists(
-            "./account-data/{}/us-east-1/iam-get-account-authorization-details.json".format(
-                account["name"]
-            )
+                "./account-data/{}/us-east-1/iam-get-account-authorization-details.json".format(
+                    account["name"]
+                )
         ):
             print("INFO: Skipping account {}".format(account["name"]))
             continue
@@ -496,14 +498,14 @@ def weboftrust(args, accounts, config):
             # Ensure we don't add connections with the same nodes on either side
             continue
         if (
-            c._type != "admin"
-            and connections.get(Connection(c.source, c.target, "admin"), False)
-            is not False
+                c._type != "admin"
+                and connections.get(Connection(c.source, c.target, "admin"), False)
+                is not False
         ):
             # Don't show an iam connection if we have an admin connection between the same nodes
             continue
         if (c._type == "s3_read") and (
-            connections.get(Connection(c.source, c.target, "s3"), False) is not False
+                connections.get(Connection(c.source, c.target, "s3"), False) is not False
         ):
             # Don't show an s3 connection if we have an iam or admin connection between the same nodes
             continue

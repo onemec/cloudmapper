@@ -1,12 +1,15 @@
 from __future__ import print_function
-import sys
-import json
+
 import argparse
-import pyjq
+import json
 import os.path
-from shared.nodes import Account, Region
-from shared.common import parse_arguments, query_aws
+import sys
 from os import listdir
+
+import pyjq
+
+from shared.common import parse_arguments, query_aws
+from shared.nodes import Account, Region
 
 __description__ = "Cross-reference EC2 instances with AMI information"
 
