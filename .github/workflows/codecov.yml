@@ -21,7 +21,7 @@ jobs:
         pip install wheel  
     - name: Generate coverage report
       run: |
-        apt-get install autoconf automake libtool python3 python3-tk jq awscli
+        sudo apt-get install autoconf automake libtool python3 python3-tk jq awscli
         pip install pytest
         pip install pytest-cov
         export PYTHONPATH=$PYTHONPATH:$(pwd)
