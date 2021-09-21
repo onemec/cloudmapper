@@ -1,4 +1,4 @@
-astroid==2.7.3
+astroid==2.8.0
 autoflake==1.4
 autopep8==1.5.7
 boto3==1.18.40
