@@ -9,7 +9,7 @@ coverage==6.1.1
 docutils==0.18
 idna==3.3
 isort==5.10.0
-Jinja2==3.0.2
+Jinja2==3.0.3
 jmespath==0.10.0
 lazy-object-proxy==1.6.0
 MarkupSafe==2.0.1
