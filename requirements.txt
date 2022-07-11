@@ -6,7 +6,7 @@ botocore==1.27.26
 certifi==2022.6.15
 chardet==5.0.0
 coverage==6.4.1
-docutils==0.18.1
+docutils==0.19
 idna==3.3
 isort==5.10.1
 Jinja2==3.1.2
