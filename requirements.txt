@@ -23,7 +23,7 @@ parliament==1.5.2
 policyuniverse==1.5.0.20220613
 pycodestyle==2.8.0
 pyflakes==2.4.0
-pyjq==2.5.2
+pyjq==2.6.0
 pylint==2.14.4
 python-dateutil==2.8.2
 PyYAML==6.0
