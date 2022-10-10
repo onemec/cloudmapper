@@ -1,7 +1,7 @@
 astroid==2.11.6
 autoflake==1.4
 autopep8==1.6.0
-boto3==1.24.22
+boto3==1.24.89
 botocore==1.27.26
 certifi==2022.6.15
 chardet==5.0.0
