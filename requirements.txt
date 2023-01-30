@@ -5,7 +5,7 @@ boto3==1.24.22
 botocore==1.27.26
 certifi==2022.6.15
 chardet==5.0.0
-coverage==6.4.1
+coverage==7.1.0
 docutils==0.18.1
 idna==3.3
 isort==5.10.1
