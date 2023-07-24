@@ -35,5 +35,5 @@ six==1.16.0
 toml==0.10.2
 typed-ast==1.5.5
 urllib3==2.0.3
-wheel==0.40.0
+wheel==0.41.0
 wrapt==1.15.0
