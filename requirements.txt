@@ -24,7 +24,7 @@ policyuniverse==1.5.1.20230703
 pycodestyle==2.10.0
 pyflakes==3.0.1
 pyjq==2.6.0
-pylint==2.17.4
+pylint==2.17.7
 python-dateutil==2.8.2
 PyYAML==6.0
 requests==2.31.0
